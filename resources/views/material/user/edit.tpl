@@ -653,14 +653,8 @@
                     imtype: $$getValue('imtype')
                 },
                 success: (data) => {
-                    if (data.ret) {
-                        $("#result").modal();
-                        $$.getElementById('ajax-im').innerHTML = `${$("#imtype").find("option:selected").text()} ${$$getValue('wechat')}`
-                        $$.getElementById('msg').innerHTML = data.msg;
-                    } else {
-                        $("#result").modal();
-                        $$.getElementById('msg').innerHTML = data.msg;
-                    }
+                    $("#result").modal();
+                    $$.getElementById('msg').innerHTML = data.msg;
                 },
                 error: (jqXHR) => {
                     $("#result").modal();
