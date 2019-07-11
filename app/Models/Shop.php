@@ -57,6 +57,12 @@ class Shop extends Model
         return $content->bandwidth ?? 0;
     }
 
+    public function usableNodes(){
+        $class = $this->user_class();
+        $nodes = Node::where('type', 1)->where('node_class', '<=', $class)->orderBy('name')->get();
+        return count($nodes);
+    }
+
     public function expire()
     {
         $content = json_decode($this->attributes['content']);

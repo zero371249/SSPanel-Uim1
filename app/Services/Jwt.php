@@ -23,6 +23,7 @@ class Jwt
 
     public static function decodeArray($input)
     {
-        return JWT::decode($input, self::getKey(), array('HS256'));
+        $decoded = JwtClient::decode($input, self::getKey(), array('HS256'));
+        return $decoded;
     }
 }

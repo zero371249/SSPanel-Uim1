@@ -7,6 +7,8 @@ use App\Middleware\Admin;
 use App\Middleware\Api;
 use App\Middleware\Mu;
 use App\Middleware\Mod_Mu;
+use App\Middleware\API\v1\API_Guest;
+use App\Middleware\API\v1\API_Auth;
 use Zeuxisoo\Whoops\Provider\Slim\WhoopsMiddleware;
 
 // config
@@ -53,6 +55,25 @@ if ($debug == false) {
 $app = new Slim\App($container);
 $app->add(new WhoopsMiddleware());
 
+
+$app->group('/api', function () {
+    // New Client API
+    $this->group('/v1', function(){
+        $this->group('/auth', function(){
+            $this->post('/login', App\Controllers\API\v1\AuthController::class . ':login');
+            $this->post('/register', App\Controllers\API\v1\AuthController::class . ':register');
+            $this->get('/get_code', App\Controllers\API\v1\AuthController::class . ':getVerificationCode');
+        })->add(new API_Guest());
+        $this->group('/user', function(){
+            $this->get('/info', App\Controllers\API\v1\UserController::class . ':info');
+            $this->get('/get_node_config', App\Controllers\API\v1\UserController::class . ':getNodeConfig');
+            $this->get('/shop/info', App\Controllers\API\v1\ShopController::class . ':index');
+            $this->post('/shop/buy', App\Controllers\API\v1\ShopController::class . ':buy');
+            $this->get('/shop/checkstatus', App\Controllers\API\v1\ShopController::class . ':checkStatus');
+            $this->get('/node/info', App\Controllers\API\v1\NodeController::class . ':info');
+        })->add(new API_Auth());
+    });
+});
 
 // Home
 $app->post('/spay_back', App\Services\Payment::class . ':notify');

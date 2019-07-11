@@ -42,5 +42,11 @@
  "minimum-stability": "dev",
   "require-dev": {
     "khanamiryan/qrcode-detector-decoder": "*"
+  },
+  "repositories": {
+    "packagist": {
+      "type": "composer",
+      "url": "https://packagist.org"
+    }
   }
 }
