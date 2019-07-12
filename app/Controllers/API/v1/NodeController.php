@@ -21,7 +21,8 @@ class NodeController
         $token = isset($token[1]) ? $token[1] : '';
         $user = AuthService::getUser($token);
 
-        $nodes = Node::where('type', 1)->where('node_class', '<=', $user->class)->where('sort', '!=', '9')->orderBy('name')->get();
+        $queryId = $request->getParam('id');
+        $nodes = Node::where('type', 1)->where('node_class', '<=', $user->class)->where('sort', '!=', '9')->where('id', 'LIKE', $queryId)->orderBy('name')->get();
 
         $fiveMinSumTraffic = TrafficLog::query()->where('log_time', '>', time()-5*60)->get();
 

@@ -67,7 +67,7 @@ class UserController
                 $muInfo = array();
                 foreach ($muUsers as $muUser) {
                     $muInfo[$i] = array(
-                        'port' => $muUser->port,
+                        'server_port' => $muUser->port,
                         'method' => $muUser->method,
                         'password' => $muUser->passwd,
                         'protocol' => $muUser->protocol,
@@ -83,7 +83,7 @@ class UserController
         }
 
         $userInfo = array(
-            'port' => $user->port,
+            'server_port' => $user->port,
 	        'method' => $user->method,
 	        'password' => $user->passwd,
 	        'protocol' => $user->protocol,
