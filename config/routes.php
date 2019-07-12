@@ -65,6 +65,7 @@ $app->group('/api', function () {
             $this->get('/get_code', App\Controllers\API\v1\AuthController::class . ':getVerificationCode');
         })->add(new API_Guest());
         $this->group('/user', function(){
+            $this->get('/announcement', App\Controllers\API\v1\AnnouncementController::class . ':info');
             $this->get('/info', App\Controllers\API\v1\UserController::class . ':info');
             $this->get('/get_node_config', App\Controllers\API\v1\UserController::class . ':getNodeConfig');
             $this->get('/shop/info', App\Controllers\API\v1\ShopController::class . ':index');
