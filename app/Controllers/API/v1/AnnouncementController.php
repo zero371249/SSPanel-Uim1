@@ -23,7 +23,7 @@ class AnnouncementController
             array_push($res['data'], array(
                 'id' => $ann->id,
                 'date' => $ann->date,
-                'content' => $ann->markdown,
+                'content' => $ann->content,
             ));
         }
 
