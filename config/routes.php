@@ -72,6 +72,8 @@ $app->group('/api', function () {
             $this->post('/shop/buy', App\Controllers\API\v1\ShopController::class . ':buy');
             $this->get('/shop/checkstatus', App\Controllers\API\v1\ShopController::class . ':checkStatus');
             $this->get('/node/info', App\Controllers\API\v1\NodeController::class . ':info');
+            $this->post('/update', App\Controllers\API\v1\UserController::class . ':updateInfo');
+            $this->get('/methods', App\Controllers\API\v1\UserController::class . ':getMethods');
         })->add(new API_Auth());
     });
 });

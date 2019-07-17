@@ -15,6 +15,7 @@ use App\Services\Config;
 use App\Controllers\LinkController;
 use App\Utils\Tools;
 use App\Utils\URL;
+use App\Utils\Hash;
 
 class UserController
 {
@@ -38,7 +39,13 @@ class UserController
             'accountExp' => strtotime($user->expire_in),
             'levelName' => 'Level. ' . $user->class,
             'trafficLogs' => array(),
-            'ssrSub' => $ssrSubLink
+            'ssrSub' => $ssrSubLink,
+            'method' => $user->method,
+            'obfs' => $user->obfs,
+            'obfs_param' => $user->obfs_param,
+            'port' => $user->port,
+            'protocol' => $user->protocol,
+            'protocol_param' => $user->protocol_param,
         );
 
         foreach ($trafficLogs_raw as $trafficLog){
@@ -102,4 +109,99 @@ class UserController
         return $response->getBody()->write(json_encode($ret));
     }
 
+    public function updateInfo($request, $response, $args){
+        $token = explode(' ', $request->getHeaderLine('Authorization'));
+        $token = isset($token[1]) ? $token[1] : '';
+        $user = AuthService::getUser($token);
+
+        $oldPassword = $request->getParam('oldPass');
+        $newPassword = $request->getParam('newPass');
+        $newPasswordRep = $request->getParam('newPassRep');
+
+        $obfs = $request->getParam('obfs');
+        $obfs_param = $request->getParam('obfs_param');
+        $protocol = $request->getParam('protocol');
+        $protocol_param = $request->getParam('protocol_param');
+        $method = $request->getParam('method');
+
+        if($obfs && $protocol && $method){
+
+            if (
+                !Tools::is_param_validate('method', $method) ||
+                !Tools::is_param_validate('protocol', $protocol) ||
+                !Tools::is_param_validate('obfs', $obfs)
+            ) {
+                $res['code'] = -1;
+                $res['msg'] = "参数不合法";
+                return $response->getBody()->write(json_encode($res));
+            }
+
+
+            $user->method = $method;
+            $user->obfs = $obfs;
+            $user->obfs_param = $obfs_param;
+            $user->protocol = $protocol;
+            $user->protocol_param = $protocol_param;
+
+            if (!URL::SSCanConnect($user) && !URL::SSRCanConnect($user)) {
+                $res['code'] = -1;
+                $res['msg'] = "配置不合法";
+                return $response->getBody()->write(json_encode($res));
+            }
+
+            $user->save();
+
+
+            $res['code'] = 0;
+            $res['msg'] = "设置成功";
+            return $response->getBody()->write(json_encode($res));
+
+        }
+
+        if($newPassword && $oldPassword && $newPasswordRep){
+            if($newPassword != $newPasswordRep){
+                $res['code'] = -1;
+                $res['msg'] = "两次密码重复不一样";
+                return $response->getBody()->write(json_encode($res));
+            }
+
+            if (!Hash::checkPassword($user->pass, $oldPassword)) {
+                $res['code'] = -1;
+                $res['msg'] = '旧密码错误';
+                return $response->getBody()->write(json_encode($res));
+            }
+
+
+            if (strlen($newPassword) < 8) {
+                $res['code'] = -1;
+                $res['msg'] = '密码长度需大于 8 位';
+                return $response->getBody()->write(json_encode($res));
+            }
+
+            $hashPwd = Hash::passwordHash($newPassword);
+            $user->pass = $hashPwd;
+            $user->save();
+
+            $user->clean_link();
+
+            $res['code'] = 0;
+            $res['msg'] = '修改成功';
+            return $response->getBody()->write(json_encode($res));
+        }
+        $res['code'] = -1;
+        $res['msg'] = '无效参数';
+        return $response->getBody()->write(json_encode($res));
+
+    }
+
+    public function getMethods($request, $response, $args){
+        $res['code'] = 0;
+        $res['data'] = array(
+            'obfs' => Config::getSupportParam('obfs'),
+            'protocol' => Config::getSupportParam('protocol'),
+            'method' => Config::getSupportParam('method'),
+
+        );
+        return $response->getBody()->write(json_encode($res));
+    }
 }

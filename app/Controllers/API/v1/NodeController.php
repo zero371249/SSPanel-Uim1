@@ -49,9 +49,8 @@ class NodeController
             $node_item = URL::getItem($user, $node, $mu_port = 453);
             $url = URL::getItemUrl($node_item, 0);
 
-            $region_pattern = '/(?![0-9a-zA-Z\_]+\s)[A-Z]{2}/';
-            preg_match($region_pattern, $node->name,$matches);
-            $region = strtolower(substr($node->name, 0, 2));
+
+            $region = $node->region;
 
             array_push($ret['data'], array(
                 'id' => $node->id,
