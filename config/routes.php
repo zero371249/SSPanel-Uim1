@@ -63,6 +63,7 @@ $app->group('/api', function () {
             $this->post('/login', App\Controllers\API\v1\AuthController::class . ':login');
             $this->post('/register', App\Controllers\API\v1\AuthController::class . ':register');
             $this->get('/get_code', App\Controllers\API\v1\AuthController::class . ':getVerificationCode');
+            $this->get('/reset', App\Controllers\API\v1\AuthController::class . ':resetPassword');
         })->add(new API_Guest());
         $this->group('/user', function(){
             $this->get('/announcement', App\Controllers\API\v1\AnnouncementController::class . ':info');

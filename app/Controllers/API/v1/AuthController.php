@@ -9,6 +9,7 @@
 namespace App\Controllers\API\v1;
 use App\Models\User;
 use App\Services\Config;
+use App\Services\Password;
 use App\Utils\Hash;
 use App\Utils\Check;
 use App\Services\Mail;
@@ -241,5 +242,26 @@ class AuthController
         $res['ret'] = -1;
         $res['msg'] = "未知错误";
         return $response->getBody()->write(json_encode($res));
+    }
+
+    public function resetPassword($request, $response){
+        $email = $request->getParam('email');
+
+        // send email
+        $user = User::where('email', $email)->first();
+        if ($user == null) {
+            $rs['code'] = -1;
+            $rs['msg'] = '此邮箱不存在';
+            return $response->getBody()->write(json_encode($rs));
+        }
+
+        $rs['code'] = 0;
+        $rs['msg'] = '重置邮件已经发送,请检查邮箱';
+        if (Password::sendResetEmail($email)) {
+            $rs['code'] = -1;
+            $rs['msg'] = '重置邮件发送失败';
+        }
+
+        return $response->getBody()->write(json_encode($rs));
     }
 } 
