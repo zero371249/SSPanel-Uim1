@@ -8,8 +8,6 @@
 namespace App\Controllers\API\v1;
 
 use App\Models\User;
-use App\Models\Node;
-use App\Models\TrafficLog;
 use App\Middleware\API\v1\JwtToken as AuthService;
 use App\Services\Config;
 use App\Controllers\LinkController;
@@ -24,7 +22,6 @@ class UserController
         $token = isset($token[1]) ? $token[1] : '';
         $user = AuthService::getUser($token);
 
-        $trafficLogs_raw = TrafficLog::where("log_time", ">", time()-2678400)->where("user_id", "=", $user->id)->get();
 
         $ssrSubLink = Config::get('subUrl') . LinkController::GenerateSSRSubCode($user->id, 0);
 
@@ -38,7 +35,6 @@ class UserController
             'balance' => $user->money,
             'accountExp' => strtotime($user->expire_in),
             'levelName' => 'Level. ' . $user->class,
-            'trafficLogs' => array(),
             'ssrSub' => $ssrSubLink,
             'method' => $user->method,
             'obfs' => $user->obfs,
@@ -47,14 +43,6 @@ class UserController
             'protocol' => $user->protocol,
             'protocol_param' => $user->protocol_param,
         );
-
-        foreach ($trafficLogs_raw as $trafficLog){
-            $raw = array(
-                'day' => (int)date('d', $trafficLog->log_time),
-                'd' => Tools::flowToGB($trafficLog->traffic)
-            );
-            array_push($res['data']['trafficLogs'], $raw);
-        }
 
         return $response->getBody()->write(json_encode($res));
     }
