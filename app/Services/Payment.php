@@ -8,6 +8,7 @@
 
 namespace App\Services;
 
+use App\Services\Gateway\AopF2F;
 use App\Services\Gateway\TrimePay;
 
 class Payment
@@ -16,6 +17,8 @@ class Payment
     {
         $method = Config::get('payment_system');
         switch ($method) {
+            case ('f2fpay'):
+                return new AopF2F();
             case ('trimepay'):
                 return new TrimePay(Config::get('trimepay_secret'));
             default:
@@ -50,5 +53,9 @@ class Payment
     public static function purchase($user, $shop, $type, $price)
     {
         return self::getClient()->purchase($user, $shop, $type, $price);
+    }
+
+    public static function getAcceptableMethods($request, $response, $args){
+        return self::getClient()->getAcceptableMethods($request, $response, $args);
     }
 }

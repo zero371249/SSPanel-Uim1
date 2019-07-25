@@ -21,6 +21,7 @@ class TrimePay extends AbstractPayment
 
     private $appSecret;
     private $gatewayUri;
+    private $methods;
     /**
      * 签名初始化
      * @param merKey	签名密钥
@@ -29,6 +30,10 @@ class TrimePay extends AbstractPayment
     public function __construct($appSecret) {
         $this->appSecret = $appSecret;
         $this->gatewayUri = 'https://api.payease.io/gateway/';
+        $this->methods = array(
+            'ALIPAY_QR' => 'QR',
+            'WEPAY_QR' => 'QR'
+        );
     }
 
 
@@ -160,6 +165,13 @@ class TrimePay extends AbstractPayment
     public function getPurchaseHTML()
     {
         return View::getSmarty()->fetch("user/trimepay.tpl");
+    }
+
+    public function getAcceptableMethods($request, $response, $args)
+    {
+        $res['code'] = 0;
+        $res['data'] = $this->methods;
+        $response->getBody()->write(json_encode($res));
     }
 
     public function getReturnHTML($request, $response, $args)

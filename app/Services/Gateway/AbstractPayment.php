@@ -24,6 +24,10 @@ abstract class AbstractPayment
     abstract public function getReturnHTML($request, $response, $args);
     abstract public function getStatus($request, $response, $args);
 
+    // !IMPORTANT! Returns an array like
+    // { 'METHOD_NAME': 'QR|WEB'}
+    abstract public function getAcceptableMethods($request, $response, $args);
+
     public static function generateGuid() {
         mt_srand((double)microtime()*10000);
         $charid = strtoupper(md5(uniqid(rand() + time(), true)));

@@ -17,6 +17,14 @@ use Omnipay\Omnipay;
 
 class AopF2F extends AbstractPayment
 {
+    private $methods;
+
+    public function __construct($appSecret) {
+        $this->methods = array(
+            'ALIPAY_QR' => 'QR'
+        );
+    }
+
     private function createGateway(){
         $gateway = Omnipay::create('Alipay_AopF2F');
         $gateway->setSignType('RSA2'); //RSA/RSA2
@@ -84,6 +92,13 @@ class AopF2F extends AbstractPayment
         } catch (\Exception $e) {
             die('fail');
         }
+    }
+
+    public function getAcceptableMethods($request, $response, $args)
+    {
+        $res['code'] = 0;
+        $res['data'] = $this->methods;
+        $response->getBody()->write(json_encode($res));
     }
 
 

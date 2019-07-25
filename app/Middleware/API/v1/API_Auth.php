@@ -15,7 +15,12 @@ class API_Auth
     {
         $token = explode(' ', $request->getHeaderLine('Authorization'));
         $token = isset($token[1]) ? $token[1] : '';
-        $user = AuthService::getUser($token);
+
+        try{
+            $user = AuthService::getUser($token);
+        } catch (\Exception $e) {
+            $user = null;
+        }
 
         if (!$user->isLogin || $user->enable == 0) {
             $res['code'] = 403;

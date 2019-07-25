@@ -71,6 +71,7 @@ $app->group('/api', function () {
             $this->get('/get_node_config', App\Controllers\API\v1\UserController::class . ':getNodeConfig');
             $this->get('/shop/info', App\Controllers\API\v1\ShopController::class . ':index');
             $this->post('/shop/buy', App\Controllers\API\v1\ShopController::class . ':buy');
+            $this->get('/shop/get_methods', App\Services\Payment::class . ':getAcceptableMethods');
             $this->get('/shop/checkstatus', App\Controllers\API\v1\ShopController::class . ':checkStatus');
             $this->get('/node/info', App\Controllers\API\v1\NodeController::class . ':info');
             $this->post('/update', App\Controllers\API\v1\UserController::class . ':updateInfo');
