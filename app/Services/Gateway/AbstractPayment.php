@@ -81,21 +81,18 @@ abstract class AbstractPayment
         if ($user->ref_by >= 1) {
             $gift_user=User::where("id", "=", $user->ref_by)->first();
             if($gift_user){
-                // $gift_user->money=$gift_user->money+($p->total * ($gift_user->payback_r/100));
-                $gift_user->money=$gift_user->money+($p->total * 0.5);
+                $gift_user->money += ($p->total * (Config::get('code_payback') / 100));
                 $gift_user->save();
                 $Payback=new Payback();
                 $Payback->total=$p->total;
                 $Payback->userid=$user->id;
                 $Payback->ref_by=$user->ref_by;
-                // $Payback->ref_get=$p->total * ($gift_user->payback_r/100);
-                $Payback->ref_get=$p->total * 0.5;
+                $Payback->ref_get=$p->total * (Config::get('code_payback') / 100);
                 $Payback->datetime=time();
                 $Payback->save();
             }
         }
-
-        Telegram::Send(" - 购买提示 - ".PHP_EOL."用户ID: ".$user->id.PHP_EOL."用户名: ".$user->user_name.PHP_EOL."数额: ".$p->total.PHP_EOL."购买商品: ".$shop->name, $admin = 1);
+        
         return 0;
     }
 
