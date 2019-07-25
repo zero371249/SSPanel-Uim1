@@ -19,7 +19,7 @@ class AopF2F extends AbstractPayment
 {
     private $methods;
 
-    public function __construct($appSecret) {
+    public function __construct() {
         $this->methods = array(
             'ALIPAY_QR' => 'QR'
         );
