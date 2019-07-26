@@ -8,6 +8,7 @@
 namespace App\Controllers\API\v1;
 
 use App\Models\User;
+use App\Models\Node;
 use App\Middleware\API\v1\JwtToken as AuthService;
 use App\Services\Config;
 use App\Controllers\LinkController;
@@ -63,25 +64,23 @@ class UserController
             $offset = (int)explode('#', $node->name)[1];
         }
 
-        if ($ssrEnable == 1) {
-            $muUsers = User::where("is_multi_user", "<>", 0)->get();
-            if ($muUsers != Null) {
-                $i = 0;
-                $muInfo = array();
-                foreach ($muUsers as $muUser) {
-                    $muInfo[$i] = array(
-                        'server_port' => $muUser->port + $offset,
-                        'method' => $muUser->method,
-                        'password' => $muUser->passwd,
-                        'protocol' => $muUser->protocol,
-                        'protocol_param' => $user->id.":".$user->passwd,
-                        'obfs' => $muUser->obfs,
-                        'obfs_param' => $user->getMuMd5(),
-                        'ssr' => true
-                    );
+        $muUsers = User::where("is_multi_user", "<>", 0)->get();
+        if ($muUsers != Null) {
+            $i = 0;
+            $muInfo = array();
+            foreach ($muUsers as $muUser) {
+                $muInfo[$i] = array(
+                    'server_port' => $muUser->port + $offset,
+                    'method' => $muUser->method,
+                    'password' => $muUser->passwd,
+                    'protocol' => $muUser->protocol,
+                    'protocol_param' => $user->id.":".$user->passwd,
+                    'obfs' => $muUser->obfs,
+                    'obfs_param' => $user->getMuMd5(),
+                    'ssr' => true
+                );
 
-                    $i++; // Warning: the value will be a correct number after done. The client should use '$muInfo[ 0 ~ $i-1]' as condition.
-                }
+                $i++; // Warning: the value will be a correct number after done. The client should use '$muInfo[ 0 ~ $i-1]' as condition.
             }
         }
 
