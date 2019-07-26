@@ -55,6 +55,14 @@ class UserController
         $ssrEnable = 1;
         $ssrEnable = URL::SSRCanConnect($user);
 
+        $id = $request->getParam('id');
+        $node = Node::where('id', '=', $id)->first();
+        $offset = 0;
+
+        if(isset(explode('#', $node->name)[1])){
+            $offset = (int)explode('#', $node->name)[1];
+        }
+
         if ($ssrEnable == 1) {
             $muUsers = User::where("is_multi_user", "<>", 0)->get();
             if ($muUsers != Null) {
@@ -62,7 +70,7 @@ class UserController
                 $muInfo = array();
                 foreach ($muUsers as $muUser) {
                     $muInfo[$i] = array(
-                        'server_port' => $muUser->port,
+                        'server_port' => $muUser->port + $offset,
                         'method' => $muUser->method,
                         'password' => $muUser->passwd,
                         'protocol' => $muUser->protocol,
@@ -78,7 +86,7 @@ class UserController
         }
 
         $userInfo = array(
-            'server_port' => $user->port,
+            'server_port' => $user->port + $offset,
 	        'method' => $user->method,
 	        'password' => $user->passwd,
 	        'protocol' => $user->protocol,

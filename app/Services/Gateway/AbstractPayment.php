@@ -92,7 +92,7 @@ abstract class AbstractPayment
                 $Payback->save();
             }
         }
-        
+
         return 0;
     }
 
