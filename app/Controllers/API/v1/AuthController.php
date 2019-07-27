@@ -257,7 +257,7 @@ class AuthController
 
         $rs['code'] = 0;
         $rs['msg'] = '重置邮件已经发送,请检查邮箱';
-        if (Password::sendResetEmail($email)) {
+        if (!Password::sendResetEmail($email)) {
             $rs['code'] = -1;
             $rs['msg'] = '重置邮件发送失败';
         }
