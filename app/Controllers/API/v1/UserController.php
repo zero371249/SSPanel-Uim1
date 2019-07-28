@@ -66,9 +66,11 @@ class UserController
 
         $muUsers = User::where("is_multi_user", "<>", 0)->get();
         if ($muUsers != Null) {
+
             $i = 0;
             $muInfo = array();
             foreach ($muUsers as $muUser) {
+                $muSSREnable = URL::SSRCanConnect($muUser);
                 $muInfo[$i] = array(
                     'server_port' => $muUser->port + $offset,
                     'method' => $muUser->method,
@@ -77,7 +79,7 @@ class UserController
                     'protocol_param' => $user->id.":".$user->passwd,
                     'obfs' => $muUser->obfs,
                     'obfs_param' => $user->getMuMd5(),
-                    'ssr' => true
+                    'ssr' => (bool)$muSSREnable
                 );
 
                 $i++; // Warning: the value will be a correct number after done. The client should use '$muInfo[ 0 ~ $i-1]' as condition.
