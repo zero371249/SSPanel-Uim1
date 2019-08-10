@@ -51,6 +51,9 @@ $System_Config['sendgrid_key'] = '';
 $System_Config['sendgrid_sender'] = '';
 
 
+//API设置--------------------------------------------------------------------------------------------
+$System_Config['default_mu_port']=null;
+
 //备份设置--------------------------------------------------------------------------------------------
 $System_Config['auto_backup_email']='';		//接收备份的邮箱
 $System_Config['auto_backup_passwd']='';	//备份的压缩密码

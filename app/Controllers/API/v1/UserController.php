@@ -70,6 +70,9 @@ class UserController
             $i = 0;
             $muInfo = array();
             foreach ($muUsers as $muUser) {
+                if(Config::get('default_mu_port')!== null && $muUser->port != Config::get('default_mu_port')){
+                    continue;
+                }
                 $muSSREnable = URL::SSRCanConnect($muUser);
                 $muInfo[$i] = array(
                     'server_port' => $muUser->port + $offset,
