@@ -114,30 +114,21 @@
         $$.getElementById('coupon').addEventListener('click', () => {
             let couponCode = $$getValue('prefix');
 
-            $.ajax({
-                type: "POST",
-                url: "/admin/coupon",
-                dataType: "json",
-                data: {
-                    prefix: $$getValue('prefix'),
-                    credit: $$getValue('credit'),
-                    shop: $$getValue('shop'),
-                    onetime: $$getValue('count'),
-                    expire: $$getValue('expire'),
-                    generate_type: $$getValue('generate-type'),
-                },
-                success: data => {
-                    $("#result").modal();
-                    $$.getElementById('msg').innerHTML = data.msg;
-                    if (data.ret) {
-                        window.setTimeout("location.href='/admin/coupon'", {$config['jump_delay']});
-                    }
-                },
-                error: jqXHR => {
-                    alert(`发生错误：${
-                            jqXHR.status
-                            }`);
-                }
+            skkReq.post('/admin/coupon', {
+                prefix: $$getValue('prefix'),
+                credit: $$getValue('credit'),
+                shop: $$getValue('shop'),
+                onetime: $$getValue('count'),
+                expire: $$getValue('expire'),
+                generate_type: $$getValue('generate-type'),
+            }).then(data => {
+                $("#result").modal();
+                $$.getElementById('msg').innerHTML = data.msg;
+                if (data.ret) window.setTimeout("location.href='/admin/coupon'", {$config['jump_delay']});
+            }).catch(err => {
+                alert(`发生错误：${
+                    err
+                }`);
             })
         })
     })

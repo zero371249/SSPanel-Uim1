@@ -112,37 +112,29 @@
                 var PushBear = 0;
 
             }
-            $.ajax({
-                type: "POST",
-                url: "/admin/announcement",
-                dataType: "json",
-                data: {
-                    content: editor.getHTML(),
-                    markdown: $('.editormd-markdown-textarea').val(),
-                    vip: $$getValue('vip'),
-                    issend,
-                    PushBear,
-                    page: sedPage
-                },
-                success: data => {
-                    if (data.ret === 1) {
-                        $("#result").modal();
-                        $$.getElementById('msg').innerHTML = data.msg;
-                        window.setTimeout("location.href=top.document.referrer", {$config['jump_delay']});
-                    } else if (data.ret === 2) {
-                        submit(data.msg);
-                    } else {
-                        $("#result").modal();
-                        $$.getElementById('msg').innerHTML = data.msg;
-                    }
-                },
-                error: jqXHR => {
+
+            skkReq.post('/admin/announcement', {
+                content: editor.getHTML(),
+                markdown: $('.editormd-markdown-textarea').val(),
+                vip: $$getValue('vip'),
+                issend,
+                PushBear,
+                page: sedPage
+            }).then(data => {
+                if (data.ret === 1) {
                     $("#result").modal();
-                    $$.getElementById('msg').innerHTML = `发生错误：${
-                            jqXHR.status
-                            }`;
+                    $$.getElementById('msg').innerHTML = data.msg;
+                    window.setTimeout(() => { window.location.href = top.document.referrer }, {$config['jump_delay']});
+                } else if (data.ret === 2) {
+                    submit(data.msg);
+                } else {
+                    $("#result").modal();
+                    $$.getElementById('msg').innerHTML = data.msg;
                 }
-            });
+            }).catch(err => {
+                $("#result").modal();
+                $$.getElementById('msg').innerHTML = `发生错误：${err}`;
+            })
         }
 
         $$.getElementById('submit').addEventListener('click', () => {

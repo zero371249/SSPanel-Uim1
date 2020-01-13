@@ -59,34 +59,25 @@
 
 <script>
     window.addEventListener('load', () => {
-        function submit() {
-            $.ajax({
-                type: "POST",
-                url: "/admin/code",
-                dataType: "json",
-                data: {
-                    amount: $$getValue('amount'),
-                    number: $$getValue('number')
-                },
-                success: data => {
-                    if (data.ret) {
-                        $("#result").modal();
-                        $$.getElementById('msg').innerHTML = data.msg;
-                        window.setTimeout("location.href=top.document.referrer", {$config['jump_delay']});
-                    } else {
-                        $("#msg-error").hide(10);
-                        $("#msg-error").show(100);
-                        $$.getElementById('msg').innerHTML = `${ldelim}data.msg{rdelim} 发生错误了。`;
-                    }
-                },
-                error: jqXHR => {
-                    $("#result").modal();
-                    $$.getElementById('msg').innerHTML = `发生错误：${
-                            jqXHR.status
-                            }`;
-                }
-            });
-        }
+        const submit = () => skkReq.post('/admin/code', {
+            amount: $$getValue('amount'),
+            number: $$getValue('number')
+        }).then(data => {
+            if (data.ret) {
+                $("#result").modal();
+                $$.getElementById('msg').innerHTML = data.msg;
+                window.setTimeout("location.href=top.document.referrer", {$config['jump_delay']});
+            } else {
+                $("#msg-error").hide(10);
+                $("#msg-error").show(100);
+                $$.getElementById('msg').innerHTML = `${ldelim}data.msg{rdelim} 发生错误了。`;
+            }
+        }).catch(err => {
+            $("#result").modal();
+            $$.getElementById('msg').innerHTML = `发生错误：${
+                err
+            }`;
+        })
 
         $("html").keydown(event => {
             if (event.keyCode === 13) {

@@ -79,34 +79,27 @@
             regex: {required: true}
         },
         {/literal}
-        submitHandler: function () {
+        submitHandler: () => {
             {literal}
-            $.ajax({
-                type: "POST",
-                url: "/admin/detect",
-                dataType: "json",
-                data: {
-                    name: $$getValue("name"),
-                    text: $$getValue("text"),
-                    regex: $$getValue("regex"),
-                    type: $$getValue("type")
-                },
-                {/literal}
-                success: data => {
-                    if (data.ret) {
-                        $("#result").modal();
-                        $$.getElementById('msg').innerHTML = data.msg;
-                        window.setTimeout("location.href=top.document.referrer", {$config['jump_delay']});
-                    } else {
-                        $("#result").modal();
-                        $$.getElementById('msg').innerHTML = data.msg;
-                    }
-                },
-                error: jqXHR => {
+            skkReq.post('/admin/detect', {
+                name: $$getValue("name"),
+                text: $$getValue("text"),
+                regex: $$getValue("regex"),
+                type: $$getValue("type")
+            }).then(data => {
+                if (data.ret) {
                     $("#result").modal();
-                    $$.getElementById('msg').innerHTML = `${ldelim}data.msg{rdelim} 发生错误了。`;
+                    $$.getElementById('msg').innerHTML = data.msg;
+                    window.setTimeout("location.href=top.document.referrer", {$config['jump_delay']});
+                } else {
+                    $("#result").modal();
+                    $$.getElementById('msg').innerHTML = data.msg;
                 }
-            });
+            }).catch(err => {
+                $("#result").modal();
+                $$.getElementById('msg').innerHTML = `${ldelim}data.msg{rdelim} 发生错误了。`;
+            })
+            {/literal}
         }
     });
 

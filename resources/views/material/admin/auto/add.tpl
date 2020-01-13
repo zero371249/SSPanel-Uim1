@@ -68,32 +68,25 @@
 <script>
     window.addEventListener('load', () => {
         function submit() {
-            $.ajax({
-                type: "POST",
-                url: "/admin/auto",
-                dataType: "json",
-                data: {
-                    content: $$getValue('content'),
-                    sign: $$getValue('sign')
-                },
-                success: data => {
-                    if (data.ret) {
-                        $("#result").modal();
-                        $$.getElementById('msg').innerHTML = data.msg;
-                        window.setTimeout("location.href=top.document.referrer", {$config['jump_delay']});
-                    } else {
-                        $("#result").modal();
-                        $$.getElementById('msg').innerHTML = data.msg;
-                    }
-                },
-                error: jqXHR => {
-                    $("#msg-error").hide(10);
-                    $("#msg-error").show(100);
-                    $$.getElementById('msg-error-p').innerHTML = `发生错误：${
-                            jqXHR.status
-                            }`;
+            skkReq.post('/admin/auto', {
+                content: $$getValue('content'),
+                sign: $$getValue('sign')
+            }).then(data => {
+                if (data.ret) {
+                    $("#result").modal();
+                    $$.getElementById('msg').innerHTML = data.msg;
+                    window.setTimeout("location.href=top.document.referrer", {$config['jump_delay']});
+                } else {
+                    $("#result").modal();
+                    $$.getElementById('msg').innerHTML = data.msg;
                 }
-            });
+            }).catch(err => {
+                $("#msg-error").hide(10);
+                $("#msg-error").show(100);
+                $$.getElementById('msg-error-p').innerHTML = `发生错误：${
+                    err
+                }`;
+            })
         }
 
         $$.getElementById('submit').addEventListener('click', submit);

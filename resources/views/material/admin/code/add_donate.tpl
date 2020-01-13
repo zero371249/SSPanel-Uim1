@@ -66,34 +66,27 @@
 
 <script>
     window.addEventListener('load', () => {
-        let submit = () => {
-            $.ajax({
-                type: "POST",
-                url: "/admin/donate",
-                dataType: "json",
-                data: {
-                    amount: $$getValue("amount"),
-                    code: $$getValue("code"),
-                    type: $$getValue("type")
-                },
-                success: data => {
-                    if (data.ret) {
-                        $("#result").modal();
-                        $$.getElementById('msg').innerHTML = data.msg;
-                        window.setTimeout("location.href=top.document.referrer", {$config['jump_delay']});
-                    } else {
-                        $("#msg-error").hide(10);
-                        $("#msg-error").show(100);
-                        $$.getElementById('msg-error-p').innerHTML = data.msg;
-                    }
-                },
-                error: jqXHR => {
+        const submit = () => {
+            skkReq.post('admin/donate', {
+                amount: $$getValue("amount"),
+                code: $$getValue("code"),
+                type: $$getValue("type")
+            }).then(data => {
+                if (data.ret) {
                     $("#result").modal();
-                    $$.getElementById('msg').innerHTML = `发生错误：${
-                            jqXHR.status
-                            }`;
+                    $$.getElementById('msg').innerHTML = data.msg;
+                    window.setTimeout("location.href=top.document.referrer", {$config['jump_delay']});
+                } else {
+                    $("#msg-error").hide(10);
+                    $("#msg-error").show(100);
+                    $$.getElementById('msg-error-p').innerHTML = data.msg;
                 }
-            });
+            }).catch(err => {
+                $("#result").modal();
+                $$.getElementById('msg').innerHTML = `发生错误：${
+                    err
+                }`;
+            })
         }
 
         $("html").keydown(event => {

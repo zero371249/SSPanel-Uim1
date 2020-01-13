@@ -80,28 +80,21 @@
 
     window.addEventListener('load', () => {
         function delete_id() {
-            $.ajax({
-                type: "DELETE",
-                url: "/admin/auto",
-                dataType: "json",
-                data: {
-                    id: deleteid
-                },
-                success: data => {
-                    if (data.ret) {
-                        $("#result").modal();
-                        $$.getElementById('msg').innerHTML = data.msg;
-                        window.setTimeout("location.href=window.location.href", {$config['jump_delay']});
-                    } else {
-                        $("#result").modal();
-                        $$.getElementById('msg').innerHTML = data.msg;
-                    }
-                },
-                error: jqXHR => {
+            skkReq.delete('/admin/auto', {
+                id: deleteid
+            }).then(data => {
+                if (data.ret) {
                     $("#result").modal();
-                    $$.getElementById('msg').innerHTML = `${ldelim}data.msg{rdelim} 发生错误了。`;
+                    $$.getElementById('msg').innerHTML = data.msg;
+                    window.setTimeout("location.href=window.location.href", {$config['jump_delay']});
+                } else {
+                    $("#result").modal();
+                    $$.getElementById('msg').innerHTML = data.msg;
                 }
-            });
+            }).catch(err => {
+                $("#result").modal();
+                $$.getElementById('msg').innerHTML = `${ldelim}err{rdelim} 发生错误了。`;
+            })
         }
 
         $$.getElementById('delete_input').addEventListener('click', delete_id);

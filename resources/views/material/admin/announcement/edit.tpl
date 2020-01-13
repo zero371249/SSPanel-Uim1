@@ -70,31 +70,24 @@
 
     window.addEventListener('load', () => {
         function submit() {
-            $.ajax({
-                type: "PUT",
-                url: "/admin/announcement/{$ann->id}",
-                dataType: "json",
-                data: {
-                    content: editor.getHTML(),
-                    markdown: editor.getMarkdown()
-                },
-                success: data => {
-                    if (data.ret) {
-                        $("#result").modal();
-                        $$.getElementById('msg').innerHTML = data.msg;
-                        window.setTimeout("location.href=top.document.referrer", {$config['jump_delay']});
-                    } else {
-                        $("#result").modal();
-                        document.getElementById('msg').innerHTML = data.msg;
-                    }
-                },
-                error: jqXHR => {
+            skkReq.post('/admin/announcement/{$ann->id}', {
+                content: editor.getHTML(),
+                markdown: editor.getMarkdown()
+            }).then(data => {
+                if (data.ret) {
                     $("#result").modal();
-                    $$.getElementById('msg').innerHTML = `发生错误：${
-                            jqXHR.status
-                            }`;
+                    $$.getElementById('msg').innerHTML = data.msg;
+                    window.setTimeout("location.href=top.document.referrer", {$config['jump_delay']});
+                } else {
+                    $("#result").modal();
+                    document.getElementById('msg').innerHTML = data.msg;
                 }
-            });
+            }).catch(err => {
+                $("#result").modal();
+                $$.getElementById('msg').innerHTML = `发生错误：${
+                    err
+                }`;
+            })
         }
 
         $$.getElementById('submit').addEventListener('click', submit);

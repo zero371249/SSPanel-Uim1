@@ -84,28 +84,21 @@
         {include file='table/js_2.tpl'}
 
         function delete_id() {
-            $.ajax({
-                type: "DELETE",
-                url: "/admin/announcement",
-                dataType: "json",
-                data: {
-                    id: deleteid
-                },
-                success: data => {
-                    if (data.ret) {
-                        $("#result").modal();
-                        $$.getElementById('msg').innerHTML = data.msg;
-                        {include file='table/js_delete.tpl'}
-                    } else {
-                        $("#result").modal();
-                        $$.getElementById('msg').innerHTML = data.msg;
-                    }
-                },
-                error: jqXHR => {
+            skkReq.delete('/admin/announcement', {
+                id: deleteid
+            }).then(data => {
+                if (data.ret) {
                     $("#result").modal();
-                    $$.getElementById('msg').innerHTML = `${ldelim}data.msg{rdelim} 发生错误了。`;
+                    $$.getElementById('msg').innerHTML = data.msg;
+                    {include file='table/js_delete.tpl'}
+                } else {
+                    $("#result").modal();
+                    $$.getElementById('msg').innerHTML = data.msg;
                 }
-            });
+            }).catch(err => {
+                $("#result").modal();
+                $$.getElementById('msg').innerHTML = `${ldelim}err{rdelim} 发生错误了。`;
+            })
         }
 
         $$.getElementById('delete_input').addEventListener('click', delete_id);
