@@ -17,6 +17,46 @@
     <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs@gh-pages/qrcode.min.js"></script>
     <!-- js -->
     <script src="/assets/js/fuck.js"></script>
+        <script>
+    // Fetch wrapper
+    window.skkReq = {
+        _request: (url, body, method, headers = { 'content-type': 'application/json' }) =>
+            fetch(url, {
+                method,
+                body,
+                headers
+            }).then(resp => {
+                return Promise.all([resp.ok, resp.status, resp.json()]);
+            }).then(([ok, status, json]) => {
+                if (ok) {
+                    return json;
+                } else {
+                    throw new Error(JSON.stringify(json.error));
+                }
+            }).catch(error => {
+                throw error;
+            }),
+
+        get = (url, headers = { 'content-type': 'application/json' }) =>
+            fetch(url, {
+                method: 'GET',
+                headers
+            }).then(resp => Promise.all([resp.ok, resp.status, resp.json(), resp.headers])
+            ).then(([ok, status, json, headers]) => {
+                if (ok) {
+                    return json;
+                } else {
+                    throw new Error(JSON.stringify(json.error));
+                }
+            }).catch(error => {
+                throw error;
+            }),
+
+        post: (url, body, headers = {}) => skkReq._request(url, body, 'POST', headers),
+        put: (url, body, headers = {}) => skkReq._request(url, body, 'PUT', headers),
+        delete: (url, body, headers = {}) => skkReq._request(url, body, 'DElETE', headers)
+    }
+    </script>
 </head>
 <body class="page-orange">
 <header class="header header-orange header-transparent header-waterfall ui-header">
